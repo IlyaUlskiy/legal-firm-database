@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Документы{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <h2>Список документов</h2>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Дело</th>
+                        <th>Тип</th>
+                        <th>Название</th>
+                        <th>Путь к файлу</th>
+                        <th>Загрузил</th>
+                        <th>Дата загрузки</th>
+                        {% if session['role_id'] in [1, 2] %}
+                        <th>Действия</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for d in documents %}
+                    <tr>
+                        <td>{{ d.case_number }}</td>
+                        <td>{{ d.type_name }}</td>
+                        <td>{{ d.document_name }}</td>
+                        <td><code>{{ d.file_path }}</code></td>
+                        <td>{{ d.uploader_name }}</td>
+                        <td>{{ d.upload_date }}</td>
+                        {% if session['role_id'] in [1, 2] %}
+                        <td>
+                            <a href="{{ url_for('edit_document', document_id=d.document_id) }}" class="btn btn-secondary btn-sm">Редактировать</a>
+                            <form method="POST" action="{{ url_for('delete_document', document_id=d.document_id) }}" style="display: inline;">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Удалить документ?')">Удалить</button>
+                            </form>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

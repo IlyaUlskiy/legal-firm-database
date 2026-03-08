@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}{% if mode == 'add' %}Добавить дело{% else %}Редактировать дело{% endif %}{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <h2>{% if mode == 'add' %}Добавить дело{% else %}Редактировать дело{% endif %}</h2>
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="client_id">Клиент *</label>
+                <select id="client_id" name="client_id" required>
+                    <option value="">Выберите клиента</option>
+                    {% for c in clients %}
+                        <option value="{{ c.client_id }}" {% if case and case.client_id == c.client_id %}selected{% endif %}>{{ c.full_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="lawyer_id">Юрист *</label>
+                <select id="lawyer_id" name="lawyer_id" required>
+                    <option value="">Выберите юриста</option>
+                    {% for l in lawyers %}
+                        <option value="{{ l.user_id }}" {% if case and case.lawyer_id == l.user_id %}selected{% endif %}>{{ l.full_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="status_id">Статус *</label>
+                <select id="status_id" name="status_id" required>
+                    {% for s in statuses %}
+                        <option value="{{ s.status_id }}" {% if case and case.status_id == s.status_id %}selected{% elif not case and s.status_id == 1 %}selected{% endif %}>{{ s.status_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="type_id">Тип дела *</label>
+                <select id="type_id" name="type_id" required>
+                    {% for t in types %}
+                        <option value="{{ t.type_id }}" {% if case and case.type_id == t.type_id %}selected{% endif %}>{{ t.type_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="category_id">Категория дела *</label>
+                <select id="category_id" name="category_id" required>
+                    {% for cat in categories %}
+                        <option value="{{ cat.category_id }}" {% if case and case.category_id == cat.category_id %}selected{% endif %}>{{ cat.category_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Описание *</label>
+                <textarea id="description" name="description" rows="4" required>{{ case.description if case else '' }}</textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+            <a href="{% if mode == 'edit' %}{{ url_for('case_details', case_id=case.case_id) }}{% else %}{{ url_for('cases') }}{% endif %}" class="btn btn-secondary">Отмена</a>
+        </form>
+    </div>
+{% endblock %}

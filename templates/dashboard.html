@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <h2>Добро пожаловать в систему учёта дел юридической фирмы</h2>
+        <p>Здесь вы можете управлять клиентами, делами, судебными заседаниями и документами.</p>
+        <p>Выберите раздел в меню слева для начала работы.</p>
+    </div>
+
+    <div class="card">
+        <h3>Быстрые ссылки</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+            <a href="{{ url_for('clients') }}" class="btn btn-primary" style="text-align: center; padding: 1rem;">
+                <h4 style="margin: 0;">Клиенты</h4>
+            </a>
+            <a href="{{ url_for('cases') }}" class="btn btn-primary" style="text-align: center; padding: 1rem;">
+                <h4 style="margin: 0;">Дела</h4>
+            </a>
+            <a href="{{ url_for('hearings') }}" class="btn btn-primary" style="text-align: center; padding: 1rem;">
+                <h4 style="margin: 0;">Заседания</h4>
+            </a>
+            <a href="{{ url_for('documents') }}" class="btn btn-primary" style="text-align: center; padding: 1rem;">
+                <h4 style="margin: 0;">Документы</h4>
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Информация о системе</h3>
+        <ul style="line-height: 1.8;">
+            <li>Версия системы: 1.0</li>
+            <li>Последнее обновление: {{ '2026-03-08' }}</li>
+            <li>Техническая поддержка: support@legal-firm.ru</li>
+        </ul>
+    </div>
+{% endblock %}

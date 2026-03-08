@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Клиенты{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <h2>Список клиентов</h2>
+
+        <div class="search-box">
+            <form method="GET">
+                <input type="text" name="search" placeholder="Поиск по ФИО..." value="{{ search_query }}">
+                <button type="submit" class="btn btn-primary">Найти</button>
+            </form>
+        </div>
+
+        {% if session['role_id'] in [1, 2] %}
+        <a href="{{ url_for('add_client') }}" class="btn btn-primary" style="margin-bottom: 1rem;">Добавить клиента</a>
+        {% endif %}
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ФИО</th>
+                        <th>Телефон</th>
+                        <th>Email</th>
+                        <th>Дата регистрации</th>
+                        <th>Менеджер</th>
+                        {% if session['role_id'] in [1, 2] %}
+                        <th>Действия</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for client in clients %}
+                    <tr>
+                        <td>{{ client.full_name }}</td>
+                        <td>{{ client.phone }}</td>
+                        <td>{{ client.email or '-' }}</td>
+                        <td>{{ client.registration_date }}</td>
+                        <td>{{ client.manager_name }}</td>
+                        {% if session['role_id'] in [1, 2] %}
+                        <td>
+                            <a href="{{ url_for('edit_client', client_id=client.client_id) }}" class="btn btn-secondary btn-sm">Редактировать</a>
+                            <form method="POST" action="{{ url_for('delete_client', client_id=client.client_id) }}" style="display: inline;">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Удалить клиента?')">Удалить</button>
+                            </form>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

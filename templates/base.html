@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Юридическая фирма{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% if 'user_id' in session %}
+    <div class="header">
+        <h1>Система учёта дел</h1>
+        <div class="user-info">
+            Привет, {{ session['full_name'] }} | Роль:
+            {% if session['role_id'] == 1 %}
+                Администратор
+            {% elif session['role_id'] == 2 %}
+                Менеджер
+            {% elif session['role_id'] == 3 %}
+                Юрист
+            {% endif %}
+            <a href="{{ url_for('logout') }}" style="color: white; margin-left: 1rem;">Выйти</a>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <a href="{{ url_for('dashboard') }}" {% if request.endpoint == 'dashboard' %}class="active"{% endif %}>Главная</a>
+        <a href="{{ url_for('clients') }}" {% if request.endpoint in ['clients', 'add_client', 'edit_client'] %}class="active"{% endif %}>Клиенты</a>
+        <a href="{{ url_for('cases') }}" {% if request.endpoint in ['cases', 'add_case', 'edit_case', 'case_details'] %}class="active"{% endif %}>Дела</a>
+        <a href="{{ url_for('hearings') }}" {% if request.endpoint in ['hearings', 'add_hearing', 'edit_hearing'] %}class="active"{% endif %}>Заседания</a>
+        <a href="{{ url_for('documents') }}" {% if request.endpoint in ['documents', 'add_document', 'edit_document'] %}class="active"{% endif %}>Документы</a>
+
+        {% if session['role_id'] == 1 %}
+        <hr style="border: none; border-top: 1px solid var(--coffee-medium); margin: 1rem 0;">
+        <a href="{{ url_for('users') }}" {% if request.endpoint in ['users', 'add_user', 'edit_user'] %}class="active"{% endif %}>Пользователи</a>
+        <a href="{{ url_for('reference') }}" {% if request.endpoint == 'reference' %}class="active"{% endif %}>Справочники</a>
+        {% endif %}
+
+        <div class="role-badge">
+            {% if session['role_id'] == 1 %}
+                Администратор
+            {% elif session['role_id'] == 2 %}
+                Менеджер
+            {% elif session['role_id'] == 3 %}
+                Юрист
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

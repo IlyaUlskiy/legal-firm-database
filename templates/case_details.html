@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}Детали дела{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <h2>Дело №{{ case.case_number }}</h2>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+            <div>
+                <strong>Клиент:</strong><br>
+                {{ case.client_name }}<br>
+                <small>{{ case.client_phone }}</small>
+            </div>
+            <div>
+                <strong>Юрист:</strong><br>
+                {{ case.lawyer_name }}
+            </div>
+            <div>
+                <strong>Менеджер:</strong><br>
+                {{ case.manager_name }}
+            </div>
+            <div>
+                <strong>Статус:</strong><br>
+                {{ case.status_name }}
+            </div>
+            <div>
+                <strong>Тип:</strong><br>
+                {{ case.type_name }}
+            </div>
+            <div>
+                <strong>Категория:</strong><br>
+                {{ case.category_name }}
+            </div>
+            <div>
+                <strong>Дата открытия:</strong><br>
+                {{ case.open_date }}
+            </div>
+            {% if case.close_date %}
+            <div>
+                <strong>Дата закрытия:</strong><br>
+                {{ case.close_date }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <strong>Описание:</strong><br>
+            {{ case.description }}
+        </div>
+
+        <a href="{{ url_for('cases') }}" class="btn btn-secondary">Назад к списку дел</a>
+
+        {% if session['role_id'] in [1, 2] %}
+        <a href="{{ url_for('edit_case', case_id=case.case_id) }}" class="btn btn-primary">Редактировать дело</a>
+        <a href="{{ url_for('add_hearing', case_id=case.case_id) }}" class="btn btn-primary">Добавить заседание</a>
+        <a href="{{ url_for('add_document', case_id=case.case_id) }}" class="btn btn-primary">Добавить документ</a>
+        {% endif %}
+    </div>
+
+    <!-- Заседания -->
+    <div class="card">
+        <h3>Судебные заседания</h3>
+
+        {% if hearings %}
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Дата и время</th>
+                        <th>Суд</th>
+                        <th>Зал</th>
+                        <th>Результат</th>
+                        {% if session['role_id'] in [1, 2] %}
+                        <th>Действия</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for h in hearings %}
+                    <tr>
+                        <td>{{ h.hearing_date }}</td>
+                        <td>{{ h.court_name }}</td>
+                        <td>{{ h.courtroom or '-' }}</td>
+                        <td>{{ h.result or '-' }}</td>
+                        {% if session['role_id'] in [1, 2] %}
+                        <td>
+                            <a href="{{ url_for('edit_hearing', hearing_id=h.hearing_id) }}" class="btn btn-secondary btn-sm">Редактировать</a>
+                            <form method="POST" action="{{ url_for('delete_hearing', hearing_id=h.hearing_id) }}" style="display: inline;">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Удалить заседание?')">Удалить</button>
+                            </form>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p>Заседаний пока нет</p>
+        {% endif %}
+    </div>
+
+    <!-- Документы -->
+    <div class="card">
+        <h3>Документы</h3>
+
+        {% if documents %}
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Тип</th>
+                        <th>Название</th>
+                        <th>Путь к файлу</th>
+                        <th>Дата загрузки</th>
+                        {% if session['role_id'] in [1, 2] %}
+                        <th>Действия</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for d in documents %}
+                    <tr>
+                        <td>{{ d.type_name }}</td>
+                        <td>{{ d.document_name }}</td>
+                        <td><code>{{ d.file_path }}</code></td>
+                        <td>{{ d.upload_date }}</td>
+                        {% if session['role_id'] in [1, 2] %}
+                        <td>
+                            <a href="{{ url_for('edit_document', document_id=d.document_id) }}" class="btn btn-secondary btn-sm">Редактировать</a>
+                            <form method="POST" action="{{ url_for('delete_document', document_id=d.document_id) }}" style="display: inline;">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Удалить документ?')">Удалить</button>
+                            </form>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p>Документов пока нет</p>
+        {% endif %}
+    </div>
+
+    <!-- Комментарии -->
+    <div class="card">
+        <h3>Комментарии</h3>
+
+        <form method="POST" action="{{ url_for('add_comment', case_id=case.case_id) }}" style="margin-bottom: 1rem;">
+            <div class="form-group">
+                <textarea name="comment_text" rows="3" placeholder="Напишите комментарий..." required style="width: 100%;"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Добавить комментарий</button>
+        </form>
+
+        {% if comments %}
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            {% for c in comments %}
+            <div style="background-color: var(--coffee-light); padding: 1rem; border-radius: 4px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <strong>{{ c.author_name }}</strong>
+                    <small>{{ c.created_at }}</small>
+                </div>
+                <p style="margin: 0;">{{ c.comment_text }}</p>
+                {% if session['role_id'] in [1, 2] %}
+                <form method="POST" action="{{ url_for('delete_comment', comment_id=c.comment_id) }}" style="display: inline; margin-top: 0.5rem;">
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Удалить комментарий?')">Удалить</button>
+                </form>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p>Комментариев пока нет</p>
+        {% endif %}
+    </div>
+{% endblock %}

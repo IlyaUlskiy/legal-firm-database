@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Вход в систему{% endblock %}
+
+{% block content %}
+<style>
+    /* Убираем отступы для страницы входа */
+    .main-content {
+        margin-left: 0 !important;
+        margin-top: 0 !important;
+        padding: 0;
+    }
+</style>
+
+<div class="login-container">
+    <h2>Вход в систему</h2>
+    
+    <form method="POST">
+        <div class="form-group">
+            <label for="username">Логин</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Пароль</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Войти</button>
+    </form>
+    
+    <div style="margin-top: 1.5rem; padding: 1rem; background-color: var(--coffee-light); border-radius: 4px;">
+        <h4 style="margin-top: 0;">Тестовые учётные записи:</h4>
+        <ul style="margin: 0; padding-left: 1.5rem;">
+            <li>Администратор: логин <code>admin</code>, пароль <code>admin</code></li>
+            <li>Менеджер: логин <code>manager</code>, пароль <code>manager</code></li>
+            <li>Юрист: логин <code>lawyer</code>, пароль <code>lawyer</code></li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Справочники{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <h2>Справочники</h2>
+
+        <h3>Роли пользователей</h3>
+        <ul>
+            {% for r in user_roles %}
+            <li>{{ r.role_id }} - {{ r.role_name }}</li>
+            {% endfor %}
+        </ul>
+
+        <h3>Статусы дел</h3>
+        <ul>
+            {% for s in case_statuses %}
+            <li>{{ s.status_id }} - {{ s.status_name }}</li>
+            {% endfor %}
+        </ul>
+
+        <h3>Типы дел</h3>
+        <ul>
+            {% for t in case_types %}
+            <li>{{ t.type_id }} - {{ t.type_name }}</li>
+            {% endfor %}
+        </ul>
+
+        <h3>Категории дел</h3>
+        <ul>
+            {% for c in case_categories %}
+            <li>{{ c.category_id }} - {{ c.category_name }}</li>
+            {% endfor %}
+        </ul>
+
+        <h3>Типы документов</h3>
+        <ul>
+            {% for d in document_types %}
+            <li>{{ d.type_id }} - {{ d.type_name }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

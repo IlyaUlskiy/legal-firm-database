@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}{% if mode == 'add' %}Добавить пользователя{% else %}Редактировать пользователя{% endif %}{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <h2>{% if mode == 'add' %}Добавить пользователя{% else %}Редактировать пользователя{% endif %}</h2>
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="username">Логин *</label>
+                <input type="text" id="username" name="username" value="{{ user.username if user else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Пароль {% if mode == 'add' %}*{% endif %}</label>
+                <input type="password" id="password" name="password" {% if mode == 'add' %}required{% endif %}>
+                {% if mode == 'edit' %}
+                <small>Оставьте пустым, чтобы не менять пароль</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="role_id">Роль *</label>
+                <select id="role_id" name="role_id" required>
+                    {% for r in roles %}
+                        {% if r.role_id != 1 %}  {# Скрываем роль администратора #}
+                        <option value="{{ r.role_id }}" {% if user and user.role_id == r.role_id %}selected{% endif %}>{{ r.role_name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="full_name">ФИО *</label>
+                <input type="text" id="full_name" name="full_name" value="{{ user.full_name if user else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" value="{{ user.email if user else '' }}" required>
+            </div>
+
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="is_active" name="is_active" {% if not user or user.is_active %}checked{% endif %}>
+                <label for="is_active" style="margin: 0; font-weight: normal;">Активен</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+            <a href="{{ url_for('users') }}" class="btn btn-secondary">Отмена</a>
+        </form>
+    </div>
+{% endblock %}

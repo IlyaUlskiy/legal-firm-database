@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}{% if mode == 'add' %}Добавить заседание{% else %}Редактировать заседание{% endif %}{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <h2>{% if mode == 'add' %}Добавить заседание{% else %}Редактировать заседание{% endif %}</h2>
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="hearing_date">Дата и время *</label>
+                <input type="datetime-local" id="hearing_date" name="hearing_date" value="{{ hearing.hearing_date if hearing else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="court_name">Название суда *</label>
+                <input type="text" id="court_name" name="court_name" value="{{ hearing.court_name if hearing else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="courtroom">Номер зала</label>
+                <input type="text" id="courtroom" name="courtroom" value="{{ hearing.courtroom if hearing else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label for="result">Результат</label>
+                <textarea id="result" name="result" rows="3">{{ hearing.result if hearing else '' }}</textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+            <a href="{{ url_for('case_details', case_id=case.case_id) }}" class="btn btn-secondary">Отмена</a>
+        </form>
+    </div>
+{% endblock %}
